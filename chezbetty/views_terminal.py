@@ -365,6 +365,16 @@ def terminal_purchase(request):
             account_type = 'pool'
             pool = Pool.from_id(purchase.fr_account_virt_id)
 
+        # Email the user if they are currently in debt
+        if float(user.balance) < 0.0:
+            send_email(
+                TO=user.uniqname+'@umich.edu',
+                SUBJECT='Please Pay Your Chez Betty Balance',
+                body=render('templates/terminal/email_user_in_debt.jinja2',
+                {'user': user})
+                )
+
+
         summary = render('templates/terminal/purchase_complete.jinja2',
             {'user': user,
              'event': purchase.event,
